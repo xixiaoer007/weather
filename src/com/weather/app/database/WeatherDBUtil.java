@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.weather.app.model.City;
 import com.weather.app.model.Couty;
@@ -15,7 +16,7 @@ import com.weather.app.model.Province;
 public class WeatherDBUtil {
 	private final String db_Name = "weather";
 	private final int version = 1;
-	private WeatherDBUtil weatherDBUtil;
+	private static WeatherDBUtil weatherDBUtil;
 	private SQLiteDatabase dataBase_read;
 	private SQLiteDatabase dataBase_write;
 
@@ -26,7 +27,7 @@ public class WeatherDBUtil {
 		dataBase_write = weatherDataBase.getWritableDatabase();
 	}
 
-	public WeatherDBUtil getWeatherDBUtilInstance(Context context) {
+	public static WeatherDBUtil getWeatherDBUtilInstance(Context context) {
 		if (weatherDBUtil == null) {
 			weatherDBUtil = new WeatherDBUtil(context);
 		}
@@ -115,8 +116,9 @@ public class WeatherDBUtil {
 	}
 
 	public List<Couty> getCouties(int city_id) {
+		Log.d("TAG", "start couty");
 		List<Couty> couties = new ArrayList<Couty>();
-		Cursor cursor = dataBase_read.query("city", null, "city_id =?",
+		Cursor cursor = dataBase_read.query("couty", null, "city_id =?",
 				new String[] { String.valueOf(city_id) }, null, null, null);
 		if (cursor != null && cursor.moveToFirst()) {
 			do {
@@ -131,8 +133,11 @@ public class WeatherDBUtil {
 				couty.setCity_id(city_id);
 				couty.setCouty_name(couty_Name);
 				couty.setCouty_code(couty_Code);
+				couties.add(couty);
+			
 			} while (cursor.moveToNext());
 		}
+		Log.d("TAG", "getCouties"+couties.size());
 		return couties;
 	}
 }
