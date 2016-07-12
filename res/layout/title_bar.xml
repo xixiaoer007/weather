@@ -27,11 +27,11 @@
 
     <Button
         android:id="@+id/titlebar_btn_right"
-        android:layout_width="64dp"
+        android:layout_width="44dp"
         android:layout_height="44dp"
         android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"
-        android:background="@android:color/transparent"
+        android:background="@drawable/refresh"
         android:textColor="@android:color/white"
         android:textSize="15sp"
         android:visibility="gone" />

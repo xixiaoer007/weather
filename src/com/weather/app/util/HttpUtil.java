@@ -36,6 +36,7 @@ public class HttpUtil {
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
+					listener.error(e);
 					e.printStackTrace();
 				} finally {
 					if (connection != null) {

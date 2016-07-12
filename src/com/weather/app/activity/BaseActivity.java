@@ -10,8 +10,9 @@ import android.widget.TextView;
 import com.weather.app.R;
 
 public abstract class BaseActivity extends Activity {
-	private TextView titleView;
-	private Button back;
+	public TextView titleView;
+	public Button back;
+	public Button refresh;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public abstract class BaseActivity extends Activity {
 		titleView = (TextView) findViewById(R.id.titlebar_title);
 
 		titleView.setText(getTitlebarTitle());
+		refresh=(Button) this.findViewById(R.id.titlebar_btn_right);
 		back = (Button) this.findViewById(R.id.titlebar_btn_back);
 		back.setOnClickListener(new View.OnClickListener() {
 

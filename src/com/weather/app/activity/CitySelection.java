@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,7 +25,10 @@ import com.weather.app.util.UtilForDataBase;
 
 public class CitySelection extends BaseActivity {
 	private ListView listView;
-	private int SELECT_LEVEL = -1;
+	private int current_Level;
+	private final int PROVINCE_MODE = 1;
+	private final int CITY_MODE = 2;
+	private final int COUTY_MODE = 3;
 	private List<String> data = new ArrayList<String>();
 	private WeatherDBUtil weatherDBUtil;
 	private List<Province> provinces;
@@ -34,6 +38,7 @@ public class CitySelection extends BaseActivity {
 	private ProgressDialog progressDialog;
 	private Province selected_Province;
 	private City selected_City;
+	private Couty selected_Couty;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,36 +57,40 @@ public class CitySelection extends BaseActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				SELECT_LEVEL += 1;
-				if (SELECT_LEVEL == 0 && provinces != null
+
+				if (current_Level == PROVINCE_MODE && provinces != null
 						&& provinces.size() > 0) {
 					selected_Province = provinces.get(position);
 					queryCities();
-				} else if (SELECT_LEVEL >= 1 && cities != null
+				} else if (current_Level == CITY_MODE && cities != null
 						&& cities.size() > 0) {
 
 					selected_City = cities.get(position);
 					Log.d("TAG", "selected" + selected_City.getCity_name());
 					queryCouties();
+				} else if (current_Level == COUTY_MODE) {
+					selected_Couty = couties.get(position);
+					String coutyCode = selected_Couty.getCouty_code();
+					String coutyName=selected_Couty.getCouty_name();
+					Intent intent = new Intent(CitySelection.this,
+							WeatherInfActivity.class);
+					intent.putExtra("coutyCode", coutyCode);
+					intent.putExtra("coutyName", coutyName);
+					startActivity(intent);
 				}
 			}
 		});
-
+		back.setVisibility(View.GONE);
 	}
 
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
-		if (SELECT_LEVEL > 1) {
-			SELECT_LEVEL = 1;
-		}
-		--SELECT_LEVEL;
-		if (SELECT_LEVEL == 1) {
-			queryCouties();
-		} else if (SELECT_LEVEL == 0) {
-			queryCities();
-		} else if (SELECT_LEVEL == -1) {
+
+		if (current_Level == CITY_MODE) {
 			queryProvinces();
+		} else if (current_Level == COUTY_MODE) {
+			queryCities();
 		}
 	}
 
@@ -98,6 +107,7 @@ public class CitySelection extends BaseActivity {
 	}
 
 	public void queryProvinces() {
+		current_Level = PROVINCE_MODE;
 		provinces = weatherDBUtil.getProvinces();
 		if (provinces.size() > 0) {
 			data.clear();
@@ -113,7 +123,7 @@ public class CitySelection extends BaseActivity {
 	}
 
 	public void queryCities() {
-
+		current_Level = CITY_MODE;
 		cities = weatherDBUtil.getCities(selected_Province.getId());
 		if (cities.size() > 0) {
 			data.clear();
@@ -129,7 +139,7 @@ public class CitySelection extends BaseActivity {
 	}
 
 	public void queryCouties() {
-
+		current_Level = COUTY_MODE;
 		couties = weatherDBUtil.getCouties(selected_City.getId());
 		if (couties.size() > 0) {
 

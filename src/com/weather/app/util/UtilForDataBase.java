@@ -1,5 +1,15 @@
 package com.weather.app.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -11,7 +21,7 @@ import com.weather.app.model.Province;
 public class UtilForDataBase {
 	public static boolean handleSaveProvincesForResponse(
 			WeatherDBUtil weatherDBUtil, String response) {
-		Log.d("TAG", "response:"+response);
+		Log.d("TAG", "response:" + response);
 		if (!TextUtils.isEmpty(response)) {
 			String[] provinces_Content = response.split(",");
 			if (provinces_Content != null && provinces_Content.length > 0) {
@@ -24,10 +34,52 @@ public class UtilForDataBase {
 
 				}
 			}
-	
+
 			return true;
 		}
 		return false;
+	}
+
+	public static void handleWeatherInfForResponse(Context context,
+			String response) {
+
+		if (!TextUtils.isEmpty(response)) {
+			JSONObject content;
+			try {
+				content = new JSONObject(response);
+				JSONObject weatherInf = content.getJSONObject("weatherinfo");
+				String city = weatherInf.getString("city");
+				String cityId = weatherInf.getString("cityid");
+				String temp1 = weatherInf.getString("temp1");
+				String temp2 = weatherInf.getString("temp2");
+				String weatherdetail = weatherInf.getString("weather");
+				String updatetime = weatherInf.getString("ptime");
+				saveWeatherInf(context, city, cityId, temp1, temp2,
+						weatherdetail, updatetime);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
+	public static void saveWeatherInf(Context context, String city_Name,
+			String city_code, String max_temp1, String min_temp2,
+			String weatherDetail, String updatetime) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日",
+				Locale.CHINA);
+		SharedPreferences.Editor editor = PreferenceManager
+				.getDefaultSharedPreferences(context).edit();
+		editor.putString("cityName", city_Name);
+		editor.putString("cityCode", city_code);
+		editor.putString("max_temp1", max_temp1);
+		editor.putString("min_temp2", min_temp2);
+		editor.putString("weatherDetail", weatherDetail);
+		editor.putString("updatetime", updatetime);
+		editor.putString("currenttime", format.format(new Date()));
+		editor.commit();
 	}
 
 	public static boolean handleSaveCitiesForResponse(
@@ -51,7 +103,7 @@ public class UtilForDataBase {
 
 	public static boolean handleSaveCoutiesForResponse(
 			WeatherDBUtil weatherDBUtil, String response, int city_Id) {
-		Log.d("TAG", "handleSaveCoutiesForResponse:"+response);
+		Log.d("TAG", "handleSaveCoutiesForResponse:" + response);
 		if (!TextUtils.isEmpty(response)) {
 			String[] couties_Content = response.split(",");
 			if (couties_Content != null && couties_Content.length > 0) {

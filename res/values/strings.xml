@@ -7,5 +7,6 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_city_selection">CitySelection</string>
     <string name="title_activity_area_selected">AreaSelected</string>
+    <string name="title_activity_weather_inf">WeatherInfActivity</string>
 
 </resources>
